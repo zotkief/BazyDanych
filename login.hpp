@@ -1,55 +1,51 @@
-#include <FL/Fl.H>       
-#include <FL/Fl_Secret_Input.H>
-#include <FL/Fl_Window.H> 
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
+#pragma once
+
 #include <string>
-#include <mariadb/mysql.h>
+#include <mysql_driver.h>
+#include <mysql_connection.h>
+#include <cppconn/prepared_statement.h>
+#include <cppconn/exception.h>
 #include <iostream>
 #include "admin.hpp"
-
-
-struct Inputs {
-    Fl_Input* username;
-    Fl_Input* password;
-    Fl_Window* window;
-};
-void button_callback(Fl_Widget* widget, void* data) {
-    Fl_Button* button = (Fl_Button*)widget;
-
-    Inputs* inputs = (Inputs*)data;
-    const char *user=inputs->username->value();
-    const char *password=inputs->password->value();
-
-    MYSQL *conn;
-
-    const char *host = "localhost";
-    const char *dbname = "lista5";
-
-    conn = mysql_init(NULL);
-
-    if (mysql_real_connect(conn, host, user, password, dbname, 0, NULL, 0)) {
-        inputs->window->hide();
-        if(user=="admin")
-            adminWindow(conn);
-    } else {
-        std::cerr << "Błąd połączenia: " << mysql_error(conn) << std::endl;
-    }
-    mysql_close(conn);
-}
+#include "user.hpp"
 
 int loginWindow()
-{
-    Fl_Window *window = new Fl_Window(400, 300, "login");
-    Fl_Input *username = new Fl_Input(100,50,200,50,"username");
-    Fl_Secret_Input *password = new Fl_Secret_Input(100,120,200,50,"password");
-    Fl_Button *button = new Fl_Button(160, 220, 80, 40, "Click me");
+{   
 
-    Inputs inputs = { username, password,window};
-    button->callback(button_callback,&inputs);
+    std::string user, pass;
+    sql::mysql::MySQL_Driver *driver;
+    sql::Connection *conn;
+    try{
 
-    window->end();
-    window->show(); 
-    Fl::run();
+
+
+        std::cout << "Username: ";
+        std::cin >> user;
+        std::cout << "Password: ";
+        std::cin >> pass;
+
+
+        driver = sql::mysql::get_mysql_driver_instance();
+        conn = driver->connect("tcp://127.0.0.1:3306", user, pass);
+        conn->setSchema("lista5");
+
+        adminView(conn);
+    } catch (sql::SQLException &e) {
+        driver = sql::mysql::get_mysql_driver_instance();
+        conn = driver->connect("tcp://127.0.0.1:3306", "user", "user");
+        conn->setSchema("lista5");
+
+
+        std::string query = "SELECT userAuth(?,?) AS valid;";
+        sql::PreparedStatement *stmt = conn->prepareStatement(query);
+        stmt->setString(1, user);
+        stmt->setString(2, pass);
+
+        sql::ResultSet *res = stmt->executeQuery();
+        if(res->next()&&res->getInt("valid"))
+        {
+            userView(conn);
+        }
+    }
     return 0;
 }

@@ -1,71 +1,58 @@
-#include <FL/Fl.H>       
-#include <FL/Fl_Secret_Input.H>
-#include <FL/Fl_Window.H> 
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Input.H>
+#pragma once
+
 #include <string>
-#include <mariadb/mysql.h>
 #include <iostream>
+#include "addBook.hpp"
+#include "searchBook.hpp"
+#include "deleteBook.hpp"
+#include "updateBook.hpp"
+#include "addUser.hpp"
+#include "deleteUser.hpp"
 
-//users
-void addUserCallback(Fl_Widget* widget, void* data)
+void adminView(sql::Connection *conn)
 {
-    
-}
-void searchUserCallback(Fl_Widget* widget, void* data)
-{
-    
-}
-void updateUserCallback(Fl_Widget* widget, void* data)
-{
-    
-}
-void deleteUserCallback(Fl_Widget* widget, void* data)
-{
-    
-}
-//books
-void addBookCallback(Fl_Widget* widget, void* data)
-{
+    while(true)
+    {
+        // Wyświetlenie menu z opcjami
+        std::cout << "===================================" << std::endl;
+        std::cout << "Wybierz jedną z opcji:" << std::endl;
+        std::cout << "0. Wyjście" << std::endl;
+        std::cout << "1. Dodaj książkę do systemu" << std::endl;
+        std::cout << "2. Wyszukaj książkę w systemie" << std::endl;
+        std::cout << "3. Usuń książkę o podanym id" << std::endl;
+        std::cout << "4. Edytuj książkę o podanym id" << std::endl;
+        std::cout << "5. Dodaj użytkownika do systemu" << std::endl;
+        std::cout << "6. Usuń użytkownika o podanym id" << std::endl;
+        std::cout << "===================================" << std::endl;
 
-}
-void searchBookCallback(Fl_Widget* widget, void* data)
-{
-    
-}
-void updateBookCallback(Fl_Widget* widget, void* data)
-{
-    
-}
-void deleteBookCallback(Fl_Widget* widget, void* data)
-{
-    
-}
-//main
-int adminWindow(MYSQL* conn)
-{
-    Fl_Window *window = new Fl_Window(200, 400, "admin");
+        int n;
+        std::cin >> n;
 
-    Fl_Button *addUser=new Fl_Button(0,0,200,45,"add user");
-    addUser->callback(addUserCallback,conn);
-    Fl_Button *searchUser=new Fl_Button(0,50,200,45,"search user");
-    searchUser->callback(searchUserCallback,conn);
-    Fl_Button *updateUser=new Fl_Button(0,100,200,45,"update user");
-    updateUser->callback(updateUserCallback,conn);
-    Fl_Button *deleteUser=new Fl_Button(0,150,200,45,"delete user");
-    deleteUser->callback(deleteUserCallback,conn);
-
-    Fl_Button *addBook=new Fl_Button(0,200,200,45,"add book");
-    addBook->callback(addBookCallback,conn);
-    Fl_Button *searchBook=new Fl_Button(0,250,200,45,"search book");
-    searchBook->callback(searchBookCallback,conn);
-    Fl_Button *updateBook=new Fl_Button(0,300,200,45,"update book");
-    updateBook->callback(updateBookCallback,conn);
-    Fl_Button *deleteBook=new Fl_Button(0,350,200,45,"delete book");
-    deleteBook->callback(deleteBookCallback,conn);
-
-    window->end();
-    window->show(); 
-
-    return Fl::run();
+        switch (n)
+        {
+        case 1:
+            addBook(conn);
+            break;
+        case 2:
+            searchBook(conn);
+            break;
+        case 3:
+            deleteBook(conn);
+            break;
+        case 4:
+            updateBook(conn);
+            break;
+        case 5:
+            addUser(conn);
+            break;
+        case 6:
+            deleteUser(conn);
+            break;
+        case 0:
+            return;
+            break;
+        default:
+            break;
+        }
+    }
 }
