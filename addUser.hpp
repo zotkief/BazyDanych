@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <cstdlib>
 
+#include "bcrypt/bcrypt.h"
+
 #include <mysql_driver.h>
 #include <mysql_connection.h>
 #include <cppconn/prepared_statement.h>
@@ -35,16 +37,23 @@ int addUser(sql::Connection *conn)
         std::cin >> password;
         std::cout << "===================================" << std::endl;
 
+        char hashed[255];
+        char salt[255];
+        bcrypt_gensalt(10,salt);
+        bcrypt_hashpw(password.c_str(), salt,hashed);
+
         // Przygotowanie zapytania SQL do dodania książki
-        std::string query = "INSERT INTO User(firstName,lastName,password,email,nick)";
-        query+="VALUES(?,?,?,?,?)";
+        std::string query = "INSERT INTO User(firstName,lastName,password,email,nick,salt)";
+        query+="VALUES(?,?,?,?,?,?)";
 
         sql::PreparedStatement *stmt = conn->prepareStatement(query);
         stmt->setString(1, firstName);
         stmt->setString(2, lastName);
-        stmt->setString(3, password); 
+        stmt->setString(3, hashed); 
         stmt->setString(4, email);
         stmt->setString(5, nick);
+        stmt->setString(6, salt);
+
 
         // Wykonanie zapytania
         stmt->executeUpdate();

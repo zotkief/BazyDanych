@@ -31,24 +31,32 @@ int userSearch(sql::Connection *conn)
 
     // Przygotowanie zapytania i wykonanie
     try {
-        sql::PreparedStatement *stmt = conn->prepareStatement("CALL userSearch(?, ?, ?, ?, ?, ?)");
-        stmt->setString(1,title);
-        stmt->setString(2,firstName);
-        stmt->setString(3,lastName);
-        stmt->setString(4,isbn);
-        stmt->setString(5,year);
-        stmt->setString(6,genre);
+        std::string query="SELECT id,title,year FROM availableBook WHERE 1=1 ";
+        if(!title.empty())
+            query += "AND title LIKE '%"+title+"%'";
+        if(!firstName.empty())
+            query += "AND firstName LIKE '%"+firstName+"%'";
+        if(!lastName.empty())
+            query += "AND lastName LIKE '%"+lastName+"%'";
+        if(!isbn.empty())
+            query += "AND isbn LIKE '%"+isbn+"%'";
+        if(!year.empty())
+            query += "AND year LIKE '%"+year+"%'";
+        if(!genre.empty())
+            query += "AND (genre LIKE '%"+genre+"%' OR genre IS NULL);";
+        sql::PreparedStatement *stmt = conn->prepareStatement(query);
 
         sql::ResultSet *res = stmt->executeQuery();
         
         // Przetwarzanie wyników zapytania
         while (res->next()) {
             std::cout << "ID: " << res->getInt("id") << ", Title: " << res->getString("title")
-                      << res->getInt("year") <<std::endl;
+                      <<", Year: "<< res->getInt("year") <<std::endl;
         }
+        delete stmt;
+        delete res;
     } catch (sql::SQLException &e) {
         std::cout << e.what() << std::endl;
     }
-
     return 0;
 }

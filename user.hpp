@@ -7,8 +7,11 @@
 #include <cppconn/prepared_statement.h>
 #include <cppconn/exception.h>
 #include "userSearch.hpp"
+#include "rentBooks.hpp"
+#include "returnBooks.hpp"
+#include "ownSearch.hpp"
 
-void userView(sql::Connection *conn)
+void userView(sql::Connection *conn,std::string nick)
 {
     while(true)
     {
@@ -17,6 +20,9 @@ void userView(sql::Connection *conn)
         std::cout << "Wybierz jedną z opcji:" << std::endl;
         std::cout << "0. Wyjście" << std::endl;
         std::cout << "1. Wyszukaj dostępne książki" << std::endl;
+        std::cout << "2. Wypożycz książki" << std::endl;
+        std::cout << "3. Oddaj książki" << std::endl;
+        std::cout << "4. Wyszukaj swoje książki" << std::endl;
         std::cout << "===================================" << std::endl;
 
         int n;
@@ -27,6 +33,15 @@ void userView(sql::Connection *conn)
         {
         case 1:
             userSearch(conn);
+            break;
+        case 2:
+            rentBooks(conn,nick);
+            break;
+        case 3:
+            returnBooks(conn,nick);
+            break;
+        case 4:
+            ownSearch(conn,nick);
             break;
         case 0:
             return;

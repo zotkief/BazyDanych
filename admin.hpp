@@ -8,6 +8,9 @@
 #include "updateBook.hpp"
 #include "addUser.hpp"
 #include "deleteUser.hpp"
+#include "searchUser.hpp"
+#include "updateUser.hpp"
+#include "addGenre.hpp"
 
 void adminView(sql::Connection *conn)
 {
@@ -23,6 +26,9 @@ void adminView(sql::Connection *conn)
         std::cout << "4. Edytuj książkę o podanym id" << std::endl;
         std::cout << "5. Dodaj użytkownika do systemu" << std::endl;
         std::cout << "6. Usuń użytkownika o podanym id" << std::endl;
+        std::cout << "7. Wyszukaj użytkownika w systemie" << std::endl;
+        std::cout << "8. Edytuj użotkownika o podanym id" << std::endl;
+        std::cout << "9. Dodaj gatunek do książki" << std::endl;
         std::cout << "===================================" << std::endl;
 
         int n;
@@ -47,6 +53,15 @@ void adminView(sql::Connection *conn)
             break;
         case 6:
             deleteUser(conn);
+            break;
+        case 7:
+            searchUser(conn);
+            break;
+        case 8:
+            updateUser(conn);
+            break;
+        case 9:
+            addGenre(conn);
             break;
         case 0:
             return;
