@@ -1,6 +1,7 @@
-#include "login.hpp"
+#include "include/connector.hpp"
 
 int main(int argc, char **argv) {
-    loginWindow();
+    connector* connect=new connector();
+    connect->loginWindow();
     return 0;
 }
