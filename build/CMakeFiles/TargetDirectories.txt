@@ -1,4 +1,0 @@
-/home/zotkief/Documents/gitHub/BazyDanych/build/CMakeFiles/BazyDanych.dir
-/home/zotkief/Documents/gitHub/BazyDanych/build/CMakeFiles/bcrypt.dir
-/home/zotkief/Documents/gitHub/BazyDanych/build/CMakeFiles/edit_cache.dir
-/home/zotkief/Documents/gitHub/BazyDanych/build/CMakeFiles/rebuild_cache.dir
